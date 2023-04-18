@@ -16,6 +16,7 @@ def compute_bb(asks: list, bids: list, mid_price: float, percent: int):
     return book_bias
 
 
+compute_bb05 = partial(compute_bb, percent=0.005)
 compute_bb1 = partial(compute_bb, percent=0.01)
 compute_bb2 = partial(compute_bb, percent=0.02)
 compute_bb4 = partial(compute_bb, percent=0.04)
@@ -37,6 +38,7 @@ async def main():
                 bids = ob.get_bids()
                 mid_price = (asks[0][0] + bids[0][0]) / 2
 
+                print("book bias 05:", compute_bb05(asks, bids, mid_price))
                 print("book bias 1:", compute_bb1(asks, bids, mid_price))
                 print("book bias 2:", compute_bb2(asks, bids, mid_price))
                 print("book bias 4:", compute_bb4(asks, bids, mid_price))
