@@ -3,6 +3,12 @@ import time
 from functools import partial
 
 from binance import DepthCacheManager, AsyncClient
+from pymongo import MongoClient
+
+
+mongo_client = MongoClient("mongodb://localhost:27017/")
+db = mongo_client["faraway-finance"]
+book_bias_collection = db["btc_data"]
 
 
 def compute_bb(asks: list, bids: list, mid_price: float, percent: int):
@@ -38,11 +44,22 @@ async def main():
                 bids = ob.get_bids()
                 mid_price = (asks[0][0] + bids[0][0]) / 2
 
-                print("book bias 05:", compute_bb05(asks, bids, mid_price))
-                print("book bias 1:", compute_bb1(asks, bids, mid_price))
-                print("book bias 2:", compute_bb2(asks, bids, mid_price))
-                print("book bias 4:", compute_bb4(asks, bids, mid_price))
-                print("last update time {}".format(ob.update_time))
+                bb05 = compute_bb05(asks, bids, mid_price)
+                bb1 = compute_bb1(asks, bids, mid_price)
+                bb2 = compute_bb2(asks, bids, mid_price)
+                bb4 = compute_bb4(asks, bids, mid_price)
+
+                # Insert the book biases and mid-price into MongoDB
+                book_bias_data = {
+                    "mid_price": mid_price,
+                    "book_bias_05": bb05,
+                    "book_bias_1": bb1,
+                    "book_bias_2": bb2,
+                    "book_bias_4": bb4,
+                    "last_book_update": ob.update_time,
+                    "current_time": current_time
+                }
+                book_bias_collection.insert_one(book_bias_data)
 
                 # Reset the start time
                 start_time = current_time
