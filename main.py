@@ -1,7 +1,24 @@
 import asyncio
 import time
+from functools import partial
 
 from binance import DepthCacheManager, AsyncClient
+
+
+def compute_bb(asks: list, bids: list, mid_price: float, percent: int):
+    max_price = mid_price * (1 + percent)
+    min_price = mid_price * (1 - percent)
+    total_ask_quantity = sum(ask[1] for ask in asks if max_price >= ask[0] >= min_price)
+    total_bid_quantity = sum(bid[1] for bid in bids if max_price >= bid[0] >= min_price)
+
+    # Compute the book bias
+    book_bias = (total_bid_quantity - total_ask_quantity) / (total_bid_quantity + total_ask_quantity)
+    return book_bias
+
+
+compute_bb1 = partial(compute_bb, percent=0.01)
+compute_bb2 = partial(compute_bb, percent=0.02)
+compute_bb4 = partial(compute_bb, percent=0.04)
 
 
 async def main():
@@ -19,14 +36,10 @@ async def main():
                 asks = ob.get_asks()
                 bids = ob.get_bids()
                 mid_price = (asks[0][0] + bids[0][0]) / 2
-                max_price = mid_price * 1.04
-                min_price = mid_price * 0.96
-                total_ask_quantity = sum(ask[1] for ask in asks if max_price >= ask[0] >= min_price)
-                total_bid_quantity = sum(bid[1] for bid in bids if max_price >= bid[0] >= min_price)
 
-                # Compute the book bias
-                book_bias = (total_bid_quantity - total_ask_quantity) / (total_bid_quantity + total_ask_quantity)
-                print("book bias:", book_bias)
+                print("book bias 1:", compute_bb1(asks, bids, mid_price))
+                print("book bias 2:", compute_bb2(asks, bids, mid_price))
+                print("book bias 4:", compute_bb4(asks, bids, mid_price))
                 print("last update time {}".format(ob.update_time))
 
                 # Reset the start time
