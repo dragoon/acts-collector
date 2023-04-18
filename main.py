@@ -24,7 +24,7 @@ compute_bb4 = partial(compute_bb, percent=0.04)
 
 async def main():
     client = await AsyncClient.create()
-    dcm = DepthCacheManager(client, 'BTCUSDT', refresh_interval=60*60, ws_interval=100)
+    dcm = DepthCacheManager(client, limit=5000, symbol='BTCUSDT', refresh_interval=60*60, ws_interval=100)
 
     async with dcm as dcm_socket:
         start_time = time.time()
