@@ -5,9 +5,10 @@ from functools import partial
 from binance import DepthCacheManager, AsyncClient
 from pymongo import MongoClient
 
+from settings import MONGO_URI
 
-mongo_client = MongoClient("mongodb://localhost:27017/")
-db = mongo_client["faraway-finance"]
+mongo_client = MongoClient(MONGO_URI)
+db = mongo_client["faraway_finance"]
 book_bias_collection = db["btc_data"]
 
 
