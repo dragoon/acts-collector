@@ -5,10 +5,11 @@ from functools import partial
 
 from binance import DepthCacheManager, AsyncClient
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 from settings import MONGO_URI
 
-mongo_client = MongoClient(MONGO_URI)
+mongo_client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 db = mongo_client["faraway_finance"]
 book_bias_collection = db["btc_data"]
 
@@ -38,9 +39,9 @@ async def main():
         last_stored_minute = None
         while True:
             ob = await dcm_socket.recv()
-            current_time = time.time()
+            current_time = datetime.utcnow()
 
-            current_minute = datetime.fromtimestamp(current_time).minute
+            current_minute = current_time.minute
             if current_minute != last_stored_minute:
                 # Get the asks and bids
                 asks = ob.get_asks()
@@ -59,7 +60,7 @@ async def main():
                     "book_bias_1": bb1,
                     "book_bias_2": bb2,
                     "book_bias_4": bb4,
-                    "last_book_update": ob.update_time,
+                    "last_book_update": datetime.fromtimestamp(ob.update_time/1000),
                     "current_time": current_time
                 }
                 book_bias_collection.insert_one(book_bias_data)
