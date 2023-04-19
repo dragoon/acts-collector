@@ -1,5 +1,6 @@
 import asyncio
 import time
+from datetime import datetime
 from functools import partial
 
 from binance import DepthCacheManager, AsyncClient
@@ -34,12 +35,13 @@ async def main():
     dcm = DepthCacheManager(client, limit=5000, symbol='BTCUSDT', refresh_interval=60*60, ws_interval=100)
 
     async with dcm as dcm_socket:
-        start_time = time.time()
+        last_stored_minute = None
         while True:
             ob = await dcm_socket.recv()
             current_time = time.time()
 
-            if current_time - start_time >= 1 * 60:
+            current_minute = datetime.fromtimestamp(current_time).minute
+            if current_minute != last_stored_minute:
                 # Get the asks and bids
                 asks = ob.get_asks()
                 bids = ob.get_bids()
@@ -62,8 +64,8 @@ async def main():
                 }
                 book_bias_collection.insert_one(book_bias_data)
 
-                # Reset the start time
-                start_time = current_time
+                # Update the last stored minute
+                last_stored_minute = current_minute
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
