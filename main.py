@@ -1,5 +1,6 @@
+import argparse
 import asyncio
-import time
+import logging
 from datetime import datetime
 from functools import partial
 
@@ -9,9 +10,18 @@ from pymongo.server_api import ServerApi
 
 from settings import MONGO_URI
 
+
+parser = argparse.ArgumentParser(description="Binance order book collector")
+parser.add_argument("-s", "--symbol", required=True, help="Instrument code to collect data for, must be USDT pair")
+args = parser.parse_args()
+
+symbol = args.symbol.lower()
+
 mongo_client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 db = mongo_client["faraway_finance"]
-book_bias_collection = db["btc_data"]
+book_bias_collection = db[f"{symbol}_data"]
+
+logger = logging.getLogger(__name__)
 
 
 def compute_bb(asks: list, bids: list, mid_price: float, percent: int):
@@ -33,7 +43,8 @@ compute_bb4 = partial(compute_bb, percent=0.04)
 
 async def main():
     client = await AsyncClient.create()
-    dcm = DepthCacheManager(client, limit=5000, symbol='BTCUSDT', refresh_interval=60*60, ws_interval=100)
+    dcm = DepthCacheManager(client, limit=5000, symbol=f'{symbol.upper()}USDT', refresh_interval=60*60, ws_interval=100)
+    logger.info(f"Starting order book collection for {symbol}-USDT")
 
     async with dcm as dcm_socket:
         last_stored_minute = None
@@ -52,6 +63,7 @@ async def main():
                 bb1 = compute_bb1(asks, bids, mid_price)
                 bb2 = compute_bb2(asks, bids, mid_price)
                 bb4 = compute_bb4(asks, bids, mid_price)
+                logger.info(f"BB4 at {current_time}: {bb4:.2f}")
 
                 # Insert the book biases and mid-price into MongoDB
                 book_bias_data = {
