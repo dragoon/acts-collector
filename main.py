@@ -8,7 +8,7 @@ from binance import DepthCacheManager, AsyncClient
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 
-from settings import MONGO_URI
+from settings import MONGO_URI, configure_logging
 
 
 parser = argparse.ArgumentParser(description="Binance order book collector")
@@ -16,6 +16,7 @@ parser.add_argument("-s", "--symbol", required=True, help="Instrument code to co
 args = parser.parse_args()
 
 symbol = args.symbol.lower()
+configure_logging(symbol)
 
 mongo_client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 db = mongo_client["faraway_finance"]

@@ -9,9 +9,14 @@ import json
 
 from environs import Env
 
-with open('logging.json', 'r') as f:
-    config_dict = json.load(f)
-logging.config.dictConfig(config_dict)
+
+def configure_logging(symbol: str):
+    with open('logging.json', 'r') as f:
+        config_dict = json.load(f)
+        log_file_name = f"data_{symbol}.log"
+        config_dict['handlers']['rotateFileHandler']['filename'] = log_file_name
+    logging.config.dictConfig(config_dict)
+
 
 env = Env()
 env.read_env()
