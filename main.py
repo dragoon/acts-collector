@@ -44,7 +44,7 @@ compute_bb4 = partial(compute_bb, percent=0.04)
 
 async def main():
     client = await AsyncClient.create()
-    dcm = DepthCacheManager(client, limit=5000, symbol=f'{symbol.upper()}USDT', refresh_interval=60*60, ws_interval=100)
+    dcm = DepthCacheManager(client, limit=5000, symbol=f'{symbol.upper()}USDT', refresh_interval=None, ws_interval=100)
     logger.info(f"Starting order book collection for {symbol}-USDT")
 
     async with dcm as dcm_socket:
@@ -65,6 +65,8 @@ async def main():
                 bb2 = compute_bb2(asks, bids, mid_price)
                 bb4 = compute_bb4(asks, bids, mid_price)
                 logger.info(f"BB4 at {current_time}: {bb4:.2f}")
+                logger.info(f"Total asks: {len(asks)}")
+                logger.info(f"Total bids: {len(bids)}")
 
                 # Insert the book biases and mid-price into MongoDB
                 book_bias_data = {
