@@ -59,7 +59,7 @@ class DataCollectorService:
         last_stored_minute = None
         while True:
             ob = await dcm_socket.recv()
-            current_time = datetime.utcnow()
+            current_time = self.data_service.dt_service.get_datetime()
             current_minute = current_time.minute
             if current_minute != last_stored_minute:
                 data_entry = self.data_service.compute_data_entry(ob, current_time)
