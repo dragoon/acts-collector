@@ -44,7 +44,11 @@ compute_bb4 = partial(compute_bb, percent=0.04)
 
 async def main():
     client = await AsyncClient.create()
-    dcm = DepthCacheManager(client, limit=5000, symbol=f'{symbol.upper()}USDT', refresh_interval=None, ws_interval=100)
+    dcm = DepthCacheManager(client, symbol=f'{symbol.upper()}USDT',
+                            limit=5000,  # initial number of order from the order book
+                            refresh_interval=0,  # disable cache refresh
+                            ws_interval=100   # update interval on websocket, ms
+                            )
     logger.info(f"Starting order book collection for {symbol}-USDT")
 
     async with dcm as dcm_socket:
