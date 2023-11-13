@@ -1,32 +1,32 @@
 {
   "version": 1,
   "formatters": {
-    "simpleFormatter": {
+    "simple": {
       "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
       "datefmt": "%Y-%m-%d %H:%M:%S"
     }
   },
   "handlers": {
-    "rotateFileHandler": {
+    "file": {
       "class": "logging.handlers.RotatingFileHandler",
       "level": "INFO",
-      "formatter": "simpleFormatter",
+      "formatter": "simple",
       "filename": "python_btc.log",
       "mode": "a",
       "maxBytes": 10485760,
       "backupCount": 3
     },
-    "consoleHandler": {
+    "console": {
       "class": "logging.StreamHandler",
       "level": "DEBUG",
-      "formatter": "simpleFormatter",
+      "formatter": "simple",
       "stream": "ext://sys.stdout"
     }
   },
   "loggers": {
     "": {
       "level": "DEBUG",
-      "handlers": ["rotateFileHandler", "consoleHandler"]
+      "handlers": ["file", "console"]
     }
   }
 }
