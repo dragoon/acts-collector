@@ -24,7 +24,24 @@ as it is the largest global crypto exchange, and offers excellent data collectio
 
 ### Order book
 
-[Order book structure description placeholder]
+An order book is a fundamental concept in financial trading,
+representing a list of buy and sell orders for a specific financial instrument,
+like a stock, currency, or cryptocurrency.
+
+The key components of an order book are bids and asks.
+A "bid" is an offer to buy a financial instrument at a specific price.
+It represents the highest price a buyer is willing to pay.
+For example, if someone wants to buy Bitcoin, they place a bid at the price they're willing to pay.
+On the other side, an "ask" is an offer to sell at a specific price.
+It represents the lowest price a seller is willing to accept.
+So, if someone wants to sell their Bitcoin, they place an ask at their desired price.
+
+The difference between the highest bid and the lowest ask is known as the "spread."
+A smaller spread often indicates a more liquid market, meaning there are many buyers and sellers,
+and it's easier to execute a trade at a price close to the market value.
+The order book provides valuable insight into the supply and demand
+at different price levels and helps traders make informed decisions.
+For instance, a large number of bids at a particular price level might indicate strong support for that price, while a significant number of asks might suggest a resistance level.
 
 ### Data types
 
@@ -42,21 +59,19 @@ Now let’s define the data we would like to collect:
 
 ### Requirements.
 
-Let's define some requirements for our data collection pipeline
-that will help us to focus on the right points during implementation (I'm mixing both technical and business
-requirements here as there are not many):
+Let's define requirements for our data collection pipeline
+that will guide our implementation:
 
+- **Multi-assets**: The system should easily handle multiple assets and allow to add new assets easily.
 - **Resilience**: Crypto exchanges work non-stop, so we want our system to
   run 24/7 and be resilient for any sort of errors (network, binance api errors, etc.).
-- **Multi-assets**: The system should easily handle multiple assets and allow to add new assets easily.
-- **Data Frequency**: We are going to collect our data points every minute.
+- **Data Frequency**: We are going to collect data in minute intervals.
+- **Testability**: We want our code to be testable with unit tests.
 
-One key point I'm not addressing here is data center / hardware resilience, e.g.,
-what to do if the servers running your data collection pipeline are failing.
-Is it okay to lose some data in case of such events? I leave this out of the scope,
-but if any data loss is not acceptable,
-a copy of the system needs to be setup in another region and
-you need some sort of failover/event merging mechanism.
+Out of scope:
+- **Data center resilience**: what to do if the server(s) running your data collection pipelines failed.
+There are a lot of possible solutions to this topic, the simplest would be to have multiple systems
+write to different databases and merge data when needed. In any case, these solutions do not require code modifications, so I leave it out of scope.
 
 ### Technology Stack.
 
