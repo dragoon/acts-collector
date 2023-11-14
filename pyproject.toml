@@ -24,7 +24,7 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["globus"]
+packages = ["datacollector"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
