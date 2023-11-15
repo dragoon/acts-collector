@@ -43,7 +43,7 @@ jobs:
             -   name: Run tests with coverage
                 run: |
                     set -o pipefail
-                    pytest --cov=. --cov-report=xml:coverage.xml --junitxml=junit.xml --cov-report=term-missing:skip-covered -cov-config=.coveragerc tests/ | tee pytest-coverage.txt
+                    pytest --cov=. --cov-report=xml:coverage.xml --junitxml=junit.xml --cov-report=term-missing -cov-config=.coveragerc tests/ | tee pytest-coverage.txt
                     exit_code=${PIPESTATUS[0]}
                     # exit with pytest code to inform github actions properly
                     exit $exit_code
