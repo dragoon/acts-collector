@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from binance import DepthCacheManager, AsyncClient, Client
 
-from datacollector.services.data_service import DataProcessService
+from datacollector.services.data_process_service import DataProcessService
 
 
 class BookManager:

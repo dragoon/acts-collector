@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from functools import partial
 
@@ -62,7 +62,7 @@ class DataProcessService:
             total_bid_4=bid_d4,
             book_bias_1=bb1,
             book_bias_4=bb4,
-            last_book_update=datetime.fromtimestamp(ob.update_time / 1000),
+            last_book_update=datetime.fromtimestamp(ob.update_time / 1000, tz=timezone.utc),
             current_time=current_time
         )
 

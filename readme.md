@@ -266,4 +266,9 @@ Finally, ``_process_depth_cache`` function checks the elapsed time and send data
 
 ### Unit testing
 
+The new structure made it possible to test each part of the system independently, which is exactly the point of unit testing.
+The source code for tests lives under [/tests/datacollector](https://github.com/FarawayTech/faraway-finance/tree/master/tests/datacollector) directory, which you can explore on your own.
+Code coverage results below demonstrate my point that the system is now fully testable:
+[!image]
+
 ### Python-binance parameters
