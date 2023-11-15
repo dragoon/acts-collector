@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 
 from datacollector.config import MONGO_URI
-from datacollector.repositories.date_repository import DataRepository
+from datacollector.repositories.data_repository import DataRepository
 from datacollector.services.collector_service import DataCollectorService, BookManager
 from datacollector.services.data_service import DataProcessService
 from datacollector.services.datetime_service import DateTimeService

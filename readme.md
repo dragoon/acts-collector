@@ -138,7 +138,7 @@ if __name__ == '__main__':
     asyncio.run(main("BTC"))
 
 ```
-Full initial version is available with tag https://github.com/FarawayTech/faraway-finance/tree/v0.1.0-beta
+Full initial version is available with tag [v0.1.0-beta](https://github.com/FarawayTech/faraway-finance/tree/v0.1.0-beta)
 This very is super short, fits into a single python file, but lacks one important requirement that we defined: this code is completely untestable.
 
 To make it testable, we need to split the implementation in several modules for business logic, data access, etc.,
@@ -147,4 +147,48 @@ This is a typical domain-driven design (DDD) that I have used successfully in ma
 
 ### Testable implementation
 
-Here is our new structure
+The new implementation is available with tag [XXX]().
+The structure of the project is now as follows:
+
+- **/datacollector/**
+  - **/config/**
+    - **data_collector_config.py**
+    - **logging_config.py**
+  - **/repositories/**
+    - **data_repository.py**
+  - **/services/**
+    - **collector_service.py**
+    - **data_service.py**
+    - **datetime_service.py**
+  - **domain.py**
+
+Let's discuss the purpose of each file.
+
+#### Configs
+- **data_collector_config.py**_ contains function to create collector service with all dependencies, a-la python dependency injection.
+- **logging_config.py**, reads data from ``logging.json`` and extends log file name with the asset name, e.g. ``data-{asset}.log``.
+
+#### Repositories
+- **data_repository.py** contains a simple repository class to store our data to mongo.
+
+#### Services
+
+- **data_service.py** implements a service to compute our asset data entry from an order book.
+- **datetime_service.py** implements current datetime retrieval, which is key for testing where we want to return specific datetime.
+
+
+- **domain.py**, this file contains the definition of the data entry we are storing:
+```python
+@dataclass(frozen=True)
+class AssetDataEntry:
+    mid_price: Decimal
+    best_bid: Decimal
+    best_ask: Decimal
+    ...
+    last_book_update: datetime
+    current_time: datetime
+
+    def to_dict(self) -> dict:
+        # Convert the data class to a dictionary
+        ...
+```

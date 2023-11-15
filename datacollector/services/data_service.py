@@ -6,7 +6,7 @@ from functools import partial
 from binance.depthcache import DepthCache
 
 from datacollector.domain import AssetDataEntry
-from datacollector.repositories.date_repository import DataRepository
+from datacollector.repositories.data_repository import DataRepository
 from datacollector.services.datetime_service import DateTimeService
 
 
