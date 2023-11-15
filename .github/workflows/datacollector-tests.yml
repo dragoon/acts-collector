@@ -1,0 +1,54 @@
+name: Python application
+
+on:
+    push:
+        branches: [ "master" ]
+    pull_request:
+        branches: [ "master" ]
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+
+        services:
+            mongodb:
+                image: mongo:latest
+                ports:
+                    - 27017:27017/tcp
+                options: >-
+                    --health-cmd "mongosh --eval='db.runCommand({ ping: 1 })'" --health-interval 10s --health-timeout 5s --health-retries 3
+
+        steps:
+            -   uses: actions/checkout@v3
+            -   name: Set up Python 3.11
+                uses: actions/setup-python@v3
+                with:
+                    python-version: "3.11"
+            -   name: Install dependencies
+                run: |
+                    python -m pip install --upgrade pip
+                    pip install flake8 pytest pytest-cov
+                    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            -   name: Lint with flake8
+                run: |
+                    # stop the build if there are Python syntax errors or undefined names
+                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                    # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+                    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+            -   name: Run tests with coverage
+                run: |
+                    set -o pipefail
+                    pytest --cov=. --cov-report=xml:coverage.xml --junitxml=junit.xml --cov-report=term-missing:skip-covered -cov-config=.coveragerc tests/ | tee pytest-coverage.txt
+                    exit_code=${PIPESTATUS[0]}
+                    # exit with pytest code to inform github actions properly
+                    exit $exit_code
+            -   name: Pytest coverage comment
+                uses: MishaKav/pytest-coverage-comment@main
+                with:
+                    pytest-coverage-path: ./pytest-coverage.txt
+                    junitxml-path: ./junit.xml
