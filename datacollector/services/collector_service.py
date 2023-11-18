@@ -1,11 +1,10 @@
 import asyncio
 import logging
-from contextlib import asynccontextmanager
 
 from binance import DepthCacheManager, AsyncClient, Client
 
 from datacollector.services.data_process_service import DataProcessService
-from services.datetime_service import DateTimeService
+from datacollector.services.datetime_service import DateTimeService
 
 
 class BookManager:

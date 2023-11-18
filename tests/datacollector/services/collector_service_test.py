@@ -5,7 +5,7 @@ import asyncio
 from datacollector.services.data_process_service import DataProcessService
 from datacollector.services.collector_service import DataCollectorService, BookManager
 from tests.datacollector.util import string_to_date
-from services.datetime_service import DateTimeService
+from datacollector.services.datetime_service import DateTimeService
 
 
 async def async_generator(mock_data):
