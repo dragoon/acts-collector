@@ -18,5 +18,8 @@ def get_data_collector_service(asset_symbol: str, dt: datetime | None) -> DataCo
     data_service = DataProcessService(data_repo, dt_service)
     book_manager = BookManager(asset_symbol)
 
-    collector_service = DataCollectorService(data_service, symbol=asset_symbol, book_manager=book_manager)
+    collector_service = DataCollectorService(data_service,
+                                             dt_service=dt_service,
+                                             symbol=asset_symbol,
+                                             book_manager=book_manager)
     return collector_service
