@@ -255,9 +255,10 @@ async def collect_data(self):
 In case we get ``asyncio.TimeoutError``, we simply sleep with a constant delay, and then try to re-connect.
 In case of other exceptions, we sleep with exponential backoff delay, and exit completely if the number of retries exceeded pre-configured value.
 
-:warning: It is worth noting, that while network errors are somewhat expected, other exceptions are not,
-and the generic exception handle will swallow everything, even errors in your implementation.
-The log monitoring system should be configured to notify the dev team in case of such errors.
+```diff
+! :warning: It is worth noting, that while network errors are somewhat expected, other exceptions are not, and the generic exception handle will swallow everything, even errors in your implementation.
+! The log monitoring system should be configured to notify the dev team in case of such errors.
+```
 
 Finally, ``_process_depth_cache`` function checks the elapsed time and sends data entry for storing in minute intervals.
 
