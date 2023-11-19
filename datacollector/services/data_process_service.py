@@ -56,6 +56,8 @@ class DataProcessService:
             mid_price=mid_price,
             best_bid=best_bid,
             best_ask=best_ask,
+            total_ask=len(asks),
+            total_bid=len(bids),
             total_ask_1=ask_d1,
             total_ask_4=ask_d4,
             total_bid_1=bid_d1,

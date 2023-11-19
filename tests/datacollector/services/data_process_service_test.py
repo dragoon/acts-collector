@@ -34,7 +34,7 @@ class DataProcessServiceTest(TestCase):
 
         result = self.service.compute_data_entry(mock_depth_cache, self.dt_service.get_datetime())
         correct_result = AssetDataEntry(mid_price=Decimal(99.5), best_ask=Decimal(100), best_bid=Decimal(99),
-                                        book_bias_1=0.0, book_bias_4=0.0,
+                                        book_bias_1=0.0, book_bias_4=0.0, total_ask=2, total_bid=2,
                                         total_ask_1=1, total_bid_1=1, total_ask_4=3, total_bid_4=3,
                                         current_time=self.dt_service.get_datetime(), last_book_update=self.dt_service.get_datetime())
 

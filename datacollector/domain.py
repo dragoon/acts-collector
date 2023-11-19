@@ -11,6 +11,8 @@ class AssetDataEntry:
     mid_price: Decimal
     best_bid: Decimal
     best_ask: Decimal
+    total_ask: float
+    total_bid: float
     total_ask_1: float
     total_ask_4: float
     total_bid_1: float
