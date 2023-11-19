@@ -15,12 +15,8 @@ Here is a high-level overview of what we are going to cover:
 
 ## Data collection platform
 
-We are going to setup data collection platform from a single exchange,
-in real system you probably would like to collect data from multiple exchanges
-and merge/aggregate them somehow depending on the trading strategy you are implementing.
-
-In these series, I am going to collect data from the [Binance exchange](https://www.binance.com/en),
-as it is the largest global crypto exchange, and offers excellent data collection APIs.
+The first system we need to build is a data collection platform.
+[TODO WHY]
 
 ### Order book
 
@@ -45,7 +41,7 @@ For instance, a large number of bids at a particular price level might indicate 
 
 ### Data types
 
-Now let’s define the data we would like to collect:
+Let’s define the data we would like to collect:
 
 - **Prices**. Any sort of strategy would probably need actual asset prices, so we need to collect at least best bid (
   highest buy) and best ask (lowest sell) prices
@@ -59,14 +55,22 @@ Now let’s define the data we would like to collect:
 
 ### Requirements.
 
-Let's define requirements for our data collection pipeline
+We are going to build a data collection platform from a single exchange,
+in real system you probably would like to collect data from multiple exchanges
+and merge/aggregate them somehow depending on the trading strategy you are implementing.
+
+
+
+Next we define requirements for our data collection pipeline
 that will guide our implementation:
 
+- **Single exchange**: I am going to collect data from a single exchange, in actual system you probably would like to collect data from multiple exchanges
+and merge/aggregate it depending on the trading strategy.
 - **Multi-assets**: The system should easily handle multiple assets and allow to add new assets easily.
 - **Resilience**: Crypto exchanges work non-stop, so we want our system to
-  run 24/7 and be resilient for any sort of errors (network, binance api errors, etc.).
+  run 24/7 and be resilient for any sort of errors (network, exchange api errors, etc.).
 - **Data Frequency**: We are going to collect data in minute intervals.
-- **Testability**: We want our code to be testable with unit tests.
+- **Testability**: We want our code to be testable with unit and integration tests.
 
 Out of scope:
 - **Data center resilience**: what to do if the server(s) running your data collection pipelines failed.
@@ -81,8 +85,9 @@ write to different databases and merge data when needed. In any case, these solu
 - **Data storage**: I will use MongoDB here for the same reasons -- simplicity and ubiquity. For production, I would
   also consider specialized Time Series databases like _InfluxDB_, _TimescaleDB_ (Postgres extension), or even
   _ClickHouse_ for large volumes, especially if you are going to store all order book events.
-- **Data APIs**: Binance
-  offers [websocket-based APIs](https://developers.binance.com/docs/binance-trading-api/websocket_api) that can be used
+- **Data APIs**: I am going to collect data from the [Binance exchange](https://www.binance.com/en),
+  as it is the largest global crypto exchange, and offers excellent data collection APIs.
+  Binance offers [websocket-based APIs](https://developers.binance.com/docs/binance-trading-api/websocket_api) that can be used
   to replicate order book and maintain your own copy in memory.
   I will additionally use a python wrapper library [python-binance](https://github.com/sammchardy/python-binance) to
   access order book data as it already implements high-level interface to access the order book.
@@ -280,9 +285,12 @@ The ``DepthCacheManager`` interface exposes three configuration parameters:
 * ``refresh_interval`` - Optional number of seconds between cache refresh, 0 or none disables refresh completely.
 * ``ws_interval`` - Optional interval for updates on websocket, default None. If not set, updates happen every second. Must be 0, None (1s) or 100 (100ms).
 
+#### Refresh interval
 The first argument I want to talk about is ``refresh_interval``. Current ([1.0.19](https://pypi.org/project/python-binance/1.0.19/)) version
 of the _python-binance_ library has a bug that prevents disabling it and sets to default (30 minutes) instead.
 This is clearly visible when we plot the total number of bids/asks for any asset:
 ![](assets/refresh_interval.png)
 For very liquid assets like BTC, order book can contain many more bids and asks then initial 5000 allowed by _Binance_.
 So actually we don't want to refresh our order book cache at all unless there is an exception.
+
+
