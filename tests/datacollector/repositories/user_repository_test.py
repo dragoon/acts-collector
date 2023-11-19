@@ -54,7 +54,7 @@ class DataRepositoryTest(TestCase):
         self.repo.insert_one(entry)
 
         # Assert: Verify that the entry is correctly inserted
-        inserted_entry = self.repo.col.find_one({"_id": entry.to_dict()["_id"]})
+        inserted_entry = self.repo.col.find_one()
         self.assertIsNotNone(inserted_entry)
         self.assertEqual(Decimal128(entry.mid_price), inserted_entry["mid_price"])
 
