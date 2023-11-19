@@ -204,22 +204,20 @@ class BookManager:
     def __init__(self, asset_symbol):
         self.asset_symbol = asset_symbol
 
-    async def connect(self):
-        self.client = await AsyncClient.create()
-        self.dcm = DepthCacheManager(self.client, symbol=f'{self.asset_symbol.upper()}USDT',
-                                     limit=5000,  # initial number of order from the order book
-                                     refresh_interval=0,  # disable cache refresh
-                                     ws_interval=100  # update interval on websocket, ms
-                                     )
-
-    @asynccontextmanager
-    async def get_dcm_socket(self):
-        async with self.dcm as dcm_socket:
-            yield dcm_socket
-
-    async def close(self):
-        if self.client:
-            await self.client.close_connection()
+    async def get_data(self):
+        try:
+            self.client = await AsyncClient.create()
+            self.dcm = DepthCacheManager(self.client, symbol=f'{self.asset_symbol.upper()}USDT',
+                                         limit=5000,
+                                         refresh_interval=0,
+                                         ws_interval=100)
+            async with self.dcm as dcm_socket:
+                while True:
+                    data = await dcm_socket.recv()
+                    yield data
+        finally:
+            if self.client:
+                await self.client.close_connection()
 ```
 
 Next, we have the ``collect_data`` function that starts the collection process and restarts it in case of errors:
@@ -229,46 +227,49 @@ async def collect_data(self):
     retry_count = 0
     while True:
         try:
-            await self.book_manager.connect()
             self.logger.info(f"Starting order book collection for {self.asset_symbol}-USDT")
-    
-            async with self.book_manager.get_dcm_socket() as dcm_socket:
-                await self._process_depth_cache(dcm_socket)
+
+            async for data in self.book_manager.get_data():
+                await self._process_depth_cache(data)
                 retry_count = 0
-    
+            # in production the data will always continue
+            break
+
         except asyncio.TimeoutError as e:
             self.logger.error(f"Network error: {e}. Reconnecting...")
             await asyncio.sleep(self.retry_delay)
-    
+
         except Exception as e:
             self.logger.exception(f"An unexpected error occurred: {e}")
             retry_count += 1
             if retry_count > self.max_retries:
                 self.logger.error("Max retries exceeded. Exiting...")
                 break
-    
+
             # Exponential backoff
             wait = self.retry_delay * 2 ** min(retry_count, self.max_retries)
             self.logger.info(f"Attempting to reconnect in {wait} seconds...")
             await asyncio.sleep(wait)
-    
-        finally:
-            await self.book_manager.close()
 ```
 
 In case we get ``asyncio.TimeoutError``, we simply sleep with a constant delay, and then try to re-connect.
 In case of other exceptions, we sleep with exponential backoff delay, and exit completely if the number of retries exceeded pre-configured value.
-It is worth noting, that while network errors are somewhat expected, other exception are not,
-so the log monitoring system should be configured to notify the dev team in case of such errors.
 
-Finally, ``_process_depth_cache`` function checks the elapsed time and send data entry for storing in minute intervals.
+:warning: It is worth noting, that while network errors are somewhat expected, other exceptions are not,
+and the generic exception handle will swallow everything, even errors in your implementation.
+The log monitoring system should be configured to notify the dev team in case of such errors.
+
+Finally, ``_process_depth_cache`` function checks the elapsed time and sends data entry for storing in minute intervals.
 
 
 ### Unit testing
 
 The new structure made it possible to test each part of the system independently, which is exactly the point of unit testing.
 The source code for tests lives under [/tests/datacollector](https://github.com/FarawayTech/faraway-finance/tree/master/tests/datacollector) directory, which you can explore on your own.
-Code coverage results below demonstrate my point that the system is now fully testable:
-[!image]
+
+I have also set up a GitHub action workflow to run unit tests automatically and report coverage:
+![](assets/coverage.png)
+
+As a bonus, I also added a repository test for mongo, which uses a local mongo instance.
 
 ### Python-binance parameters
