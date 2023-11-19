@@ -1,0 +1,7 @@
+[run]
+omit =
+    tests/*
+    datacollector/config/*
+
+[coverage:report]
+skip_empty = true
