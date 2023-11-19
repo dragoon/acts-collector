@@ -279,3 +279,10 @@ The ``DepthCacheManager`` interface exposes three configuration parameters:
 * ``limit`` - optional number of orders to get from orderbook (default 100, max 5000)
 * ``refresh_interval`` - Optional number of seconds between cache refresh, 0 or none disables refresh completely.
 * ``ws_interval`` - Optional interval for updates on websocket, default None. If not set, updates happen every second. Must be 0, None (1s) or 100 (100ms).
+
+The first argument I want to talk about is ``refresh_interval``. Current ([1.0.19](https://pypi.org/project/python-binance/1.0.19/)) version
+of the _python-binance_ library has a bug that prevents disabling it and sets to default (30 minutes) instead.
+This is clearly visible when we plot the total number of bids/asks for any asset:
+![](assets/refresh_interval.png)
+For very liquid assets like BTC, order book can contain many more bids and asks then initial 5000 allowed by _Binance_.
+So actually we don't want to refresh our order book cache at all unless there is an exception.
