@@ -11,12 +11,12 @@ class AssetDataEntry:
     mid_price: Decimal
     best_bid: Decimal
     best_ask: Decimal
-    total_ask: float
-    total_bid: float
-    total_ask_1: float
-    total_ask_4: float
-    total_bid_1: float
-    total_bid_4: float
+    total_ask: int
+    total_bid: int
+    total_ask_1: int
+    total_ask_4: int
+    total_bid_1: int
+    total_bid_4: int
     book_bias_1: float
     book_bias_4: float
     last_book_update: datetime
