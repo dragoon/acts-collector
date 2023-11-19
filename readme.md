@@ -273,3 +273,9 @@ I have also set up a GitHub action workflow to run unit tests automatically and 
 As a bonus, I also added a repository test for mongo, which uses a local mongo instance.
 
 ### Python-binance parameters
+Since we are using _python-binance_ wrapper library, it is important to understand whether its parameters affect the quality of data we collect.
+
+The ``DepthCacheManager`` interface exposes three configuration parameters:
+* ``limit`` - optional number of orders to get from orderbook (default 100, max 5000)
+* ``refresh_interval`` - Optional number of seconds between cache refresh, 0 or none disables refresh completely.
+* ``ws_interval`` - Optional interval for updates on websocket, default None. If not set, updates happen every second. Must be 0, None (1s) or 100 (100ms).
