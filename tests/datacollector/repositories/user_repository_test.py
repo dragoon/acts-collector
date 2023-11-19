@@ -8,7 +8,7 @@ from bson import Decimal128
 from pymongo import MongoClient
 
 from datacollector.repositories.data_repository import DataRepository
-from domain import AssetDataEntry
+from datacollector.domain import AssetDataEntry
 
 
 class DataRepositoryTest(TestCase):
