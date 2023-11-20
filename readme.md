@@ -290,7 +290,12 @@ The first argument I want to talk about is ``refresh_interval``. Current ([1.0.1
 of the _python-binance_ library has a bug that prevents disabling it and sets to default (30 minutes) instead.
 This is clearly visible when we plot the total number of bids/asks for any asset:
 ![](assets/refresh_interval.png)
+
 For very liquid assets like BTC, order book can contain many more bids and asks then initial 5000 allowed by _Binance_.
 So actually we don't want to refresh our order book cache at all unless there is an exception.
+After fixing the issue with refresh interval, the chart looks reasonable like this:
+
+![](assets/refresh_interval_fixed.png)
+
 
 
