@@ -6,7 +6,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "farawaytech-finance"
+name = "acts-data-collector"
 description = "Collect crypto asset data from binance and store in MongoDB"
 readme = "README.md"
 requires-python = ">=3.10"
