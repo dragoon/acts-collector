@@ -7,7 +7,7 @@ scratch for crypto assets.
 
 Here is a high-level overview of what we are going to cover:
 
-1. Data Collection platform
+1. Data collection platform
 2. Signal generation
 3. Backtesting & reporting
 4. Unit and integration testing
@@ -16,7 +16,8 @@ Here is a high-level overview of what we are going to cover:
 ## Data collection platform
 
 The first system we need to build is a data collection platform.
-[TODO WHY]
+For backtesting, we need to collect at least best bid/ask prices,
+and to implement a trading strategy, we need to collect other features from the order book, so let's talk about it briefly.
 
 ### Order book
 
@@ -260,7 +261,7 @@ async def collect_data(self):
 In case we get ``asyncio.TimeoutError``, we simply sleep with a constant delay, and then try to re-connect.
 In case of other exceptions, we sleep with exponential backoff delay, and exit completely if the number of retries exceeded pre-configured value.
 
-:warning: It is worth noting, that while network errors are somewhat expected, other exceptions are not,
+:warning: NB: while network errors are somewhat expected, other exceptions are not,
 and the generic exception handle will swallow everything, even errors in your implementation.
 The log monitoring system should be configured to notify the dev team in case of such errors.
 
@@ -289,6 +290,7 @@ The ``DepthCacheManager`` interface exposes three configuration parameters:
 The first argument I want to talk about is ``refresh_interval``. Current ([1.0.19](https://pypi.org/project/python-binance/1.0.19/)) version
 of the _python-binance_ library has a bug that prevents disabling it and sets to default (30 minutes) instead.
 This is clearly visible when we plot the total number of bids/asks for any asset:
+
 ![](assets/refresh_interval.png)
 
 For very liquid assets like BTC, order book can contain many more bids and asks then initial 5000 allowed by _Binance_.
@@ -296,6 +298,16 @@ So actually we don't want to refresh our order book cache at all unless there is
 After fixing the issue with refresh interval, the chart looks reasonable like this:
 
 ![](assets/refresh_interval_fixed.png)
+
+#### Limit
+The ``limit`` parameter sets the initial amount of orders to retrieve from the order book.
+Ideally, we want to retrieve the full order book on startup, and not have this parameter at all,
+but _Binance API_ imposes this limit. The only reason for making it lower than maximum 5000 is because
+Binance API has a complex system of API request limits based on the weight of the actual call,
+but in case of websockets this is not applicable.
+
+For the sake of comparison, here are the graphs of total number of asks and bids for Bitcoin using starting values of 5000 and 100 for limit:
+
 
 
 
