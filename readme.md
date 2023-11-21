@@ -295,18 +295,18 @@ This is clearly visible when we plot the total number of bids/asks for any asset
 
 For very liquid assets like BTC, order book can contain many more bids and asks then initial 5000 allowed by _Binance_.
 So actually we don't want to refresh our order book cache at all unless there is an exception.
-After fixing the issue with refresh interval, the chart looks reasonable like this:
+After fixing the issue with refresh interval, the chart looks correct like this:
 
 ![](assets/refresh_interval_fixed.png)
 
 #### Limit
 The ``limit`` parameter sets the initial amount of orders to retrieve from the order book.
 Ideally, we want to retrieve the full order book on startup, and not have this parameter at all,
-but _Binance API_ imposes this limit. The only reason for making it lower than maximum 5000 is because
-Binance API has a complex system of API request limits based on the weight of the actual call,
-but in case of websockets this is not applicable.
+but _Binance API_ imposes this limit. I don't see any reason for making this lower than maximum 5000.
+As we said, order book can contain many more bids and ask than top 5000, and we only receive updates to the order book
+after we started our data collector, so it make date some time until you have full order book.
 
-For the sake of comparison, here are the graphs of total number of asks and bids for Bitcoin using starting values of 5000 and 100 for limit:
+For example, here are the graphs of total number of asks and bids for Bitcoin using starting values of 5000 and 100 for limit:
 
 
 
