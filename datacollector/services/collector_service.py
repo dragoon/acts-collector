@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import pymongo.errors
 
 from binance import DepthCacheManager, AsyncClient, Client
 
@@ -12,14 +13,14 @@ class BookManager:
     client: Client
     dcm: DepthCacheManager
 
-    def __init__(self, asset_symbol):
+    def __init__(self, asset_symbol: str):
         self.asset_symbol = asset_symbol
 
     async def get_data(self):
         try:
             self.client = await AsyncClient.create()
             self.dcm = DepthCacheManager(self.client, symbol=f'{self.asset_symbol.upper()}USDT',
-                                         limit=5000,
+                                         limit=5000,  # max
                                          refresh_interval=0,
                                          ws_interval=100)
             # library has a bug
@@ -58,14 +59,14 @@ class DataCollectorService:
                 self.logger.info(f"Starting order book collection for {self.asset_symbol}-USDT")
 
                 async for data in self.book_manager.get_data():
-                    await self._process_depth_cache(data)
-                    retry_count = 0
+                    try:
+                        await self._process_depth_cache(data)
+                        retry_count = 0
+                    except pymongo.errors.ConnectionFailure as e:
+                        self.logger.error(f"Mongo error: {e}. Sleeping...")
+                        await asyncio.sleep(self.retry_delay)
                 # in production the data will always continue
                 break
-
-            except asyncio.TimeoutError as e:
-                self.logger.error(f"Network error: {e}. Reconnecting...")
-                await asyncio.sleep(self.retry_delay)
 
             except Exception as e:
                 self.logger.exception(f"An unexpected error occurred: {e}")

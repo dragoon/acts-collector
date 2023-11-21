@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch, AsyncMock
-import asyncio
+
+import pymongo.errors
 
 from datacollector.services.data_process_service import DataProcessService
 from datacollector.services.collector_service import DataCollectorService, BookManager
@@ -31,10 +32,12 @@ class TestDataCollectorService(unittest.IsolatedAsyncioTestCase):
 
     @patch('datacollector.services.collector_service.asyncio.sleep', new_callable=AsyncMock)
     async def test_collect_data_timeout_error(self, mock_sleep):
-        self.book_manager.get_data.side_effect = [asyncio.TimeoutError("Timeout"), Exception("Error")]
+        self.book_manager.get_data.side_effect = lambda: async_generator([{}, Exception("Error")])
+        self.data_service.insert_one.side_effect = [pymongo.errors.ConnectionFailure()]
         await self.collector_service.collect_data()
-        # 1 timeout error + max_retries
-        self.assertEqual(self.collector_service.max_retries + 1, mock_sleep.call_count)
+        self.assertEqual(2 + self.collector_service.max_retries, self.data_service.insert_one.call_count)
+        # 1 mongo error + max_retries
+        self.assertEqual(1 + self.collector_service.max_retries, mock_sleep.call_count)
 
     @patch('datacollector.services.collector_service.asyncio.sleep', new_callable=AsyncMock)
     async def test_collect_data_generic_exception(self, mock_sleep):
