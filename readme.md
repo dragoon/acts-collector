@@ -308,6 +308,11 @@ after we started our data collector, so it make date some time until you have fu
 
 For example, here are the graphs of total number of asks and bids for Bitcoin using starting values of 5000 and 100 for limit:
 
+![](assets/different_limits.png)
+
+During the particular moment when BTC price went down, we can see lots of bids eliminated such that the lines quickly converge to the same values,
+while total asks difference remains significant even after many hours.
+
 
 
 
