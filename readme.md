@@ -7,15 +7,16 @@ scratch for crypto assets.
 
 Here is a high-level overview of what we are going to cover:
 
-1. Data collection platform
-2. Signal generation
+1. Real-time data collection system
+2. Historical data processing
 3. Backtesting & reporting
 4. Unit and integration testing
 5. Live trading
 
-## Data collection platform
+## Data collection system
 
-The first system we need to build is a data collection platform.
+The first system we are going to build is a real-time data collection system.
+[TODO]
 For backtesting, we need to collect at least best bid/ask prices,
 and to implement a trading strategy, we need to collect other features from the order book, so let's talk about it briefly.
 
@@ -144,7 +145,7 @@ if __name__ == '__main__':
     asyncio.run(main("BTC"))
 
 ```
-Full initial version is available with tag [v0.1.0-beta](https://github.com/FarawayTech/faraway-finance/tree/v0.1.0-beta)
+Full initial version is available with tag [v0.1.0-beta](https://github.com/dragoon/acts-collector/tree/v0.1.0-beta)
 This very is super short, fits into a single python file, but lacks one important requirement that we defined: this code is completely untestable.
 
 To make it testable, we need to split the implementation in several modules for business logic, data access, etc.,
@@ -153,7 +154,7 @@ This is a typical domain-driven design (DDD) that I have used successfully in ma
 
 ### Testable implementation
 
-The new implementation is available with tag [XXX]().
+The new implementation is available with tag [v0.2.0](https://github.com/dragoon/acts-collector/tree/v0.2.0).
 The structure of the project is now as follows:
 
 - **/datacollector/**
@@ -236,14 +237,14 @@ async def collect_data(self):
             self.logger.info(f"Starting order book collection for {self.asset_symbol}-USDT")
 
             async for data in self.book_manager.get_data():
-                await self._process_depth_cache(data)
-                retry_count = 0
+                try:
+                    await self._process_depth_cache(data)
+                    retry_count = 0
+                except pymongo.errors.ConnectionFailure as e:
+                    self.logger.error(f"Mongo error: {e}. Sleeping...")
+                    await asyncio.sleep(self.retry_delay)
             # in production the data will always continue
             break
-
-        except asyncio.TimeoutError as e:
-            self.logger.error(f"Network error: {e}. Reconnecting...")
-            await asyncio.sleep(self.retry_delay)
 
         except Exception as e:
             self.logger.exception(f"An unexpected error occurred: {e}")
@@ -258,12 +259,15 @@ async def collect_data(self):
             await asyncio.sleep(wait)
 ```
 
-In case we get ``asyncio.TimeoutError``, we simply sleep with a constant delay, and then try to re-connect.
-In case of other exceptions, we sleep with exponential backoff delay, and exit completely if the number of retries exceeded pre-configured value.
+I only catch ``pymongo.errors.ConnectionFailure`` in the main data loop, since we don't want to stop the collection system in case our database temporary becomes unavailable.
 
 :warning: NB: while network errors are somewhat expected, other exceptions are not,
 and the generic exception handle will swallow everything, even errors in your implementation.
 The log monitoring system should be configured to notify the dev team in case of such errors.
+
+:warning: I also noticed that ``python-binance`` library swallows most of the errors and tries to reconnect to the socket internally.
+This strategy however, is not ideal, since it will not raise an error in case of prolonged network issues (more than 15-20 seconds).
+You can try it yourself but starting the program and disabling network access.
 
 Finally, ``_process_depth_cache`` function checks the elapsed time and sends data entry for storing in minute intervals.
 
@@ -312,7 +316,6 @@ For example, here are the graphs of total number of asks and bids for Bitcoin us
 
 During the particular moment when BTC price went down, we can see lots of bids eliminated such that the lines quickly converge to the same values,
 while total asks difference remains significant even after many hours.
-
 
 
 
