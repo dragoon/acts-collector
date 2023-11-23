@@ -33,8 +33,8 @@ On the other side, an "ask" is an offer to sell at a specific price.
 It represents the lowest price a seller is willing to accept.
 So, if someone wants to sell their Bitcoin, they place an ask at their desired price.
 
-![](assets/bid_ask.png)
-Image source: https://www.researchgate.net/figure/Example-of-an-order-book-This-figure-illustrates-a-toy-example-of-an-order-book-Source_fig3_362852898
+![](assets/bid_ask_spread.png)
+Image source: https://river.com/learn/terms/b/bid-ask-spread/
 
 The difference between the highest bid and the lowest ask is known as the "spread."
 A smaller spread often indicates a more liquid market, meaning there are many buyers and sellers,
