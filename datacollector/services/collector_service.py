@@ -24,7 +24,7 @@ class BookManager:
                                          refresh_interval=0,
                                          ws_interval=100)
             # library has a bug
-            self.dcm._refresh_interval = None
+            #self.dcm._refresh_interval = None
             async with self.dcm as dcm_socket:
                 while True:
                     data = await dcm_socket.recv()

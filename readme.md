@@ -16,9 +16,9 @@ Here is a high-level overview of what we are going to cover:
 ## Data collection system
 
 The first system we are going to build is a real-time data collection system.
-[TODO]
-For backtesting, we need to collect at least best bid/ask prices,
-and to implement a trading strategy, we need to collect other features from the order book, so let's talk about it briefly.
+This system will collect data from the order book in near real-time,
+such that a trading strategy can calculate buy/sell signals in a timely fashion.
+Any trading strategy will need to collect some features from the order book, so let's talk about it briefly.
 
 ### Order book
 
@@ -31,25 +31,18 @@ A "bid" is an offer to buy a financial instrument at a specific price.
 It represents the highest price a buyer is willing to pay.
 On the other side, an "ask" is an offer to sell at a specific price.
 It represents the lowest price a seller is willing to accept.
-So, if someone wants to sell their Bitcoin, they place an ask at their desired price.
-
-![](assets/bid_ask_spread.png)
-Image source: https://river.com/learn/terms/b/bid-ask-spread/
 
 The difference between the highest bid and the lowest ask is known as the "spread."
 A smaller spread often indicates a more liquid market, meaning there are many buyers and sellers,
 and it's easier to execute a trade at a price close to the market value.
-The order book provides valuable insight into the supply and demand
-at different price levels and helps traders make informed decisions.
-For instance, a large number of bids at a particular price level might indicate strong support for that price,
-while a significant number of asks might suggest a resistance level.
 
-Here is a bar plot visualization of an order book for bitcoin:
+Here is a bar plot visualization of an order book for bitcoin that illustrates those concepts:
 
 [XXX]
 
 The height of each bar is the amount of orders at this particular price.
-You can see the peaks on both asks and bids sides of the book.
+The lowest ask is XXX USDT, the highest bid is XXX USDT, Current mid-price is XXX USDT, and current spread is XXX USDT.
+You can notice the peaks on both asks and bids sides of the book.
 This is what people refer to as a support/resistance price of an asset.
 Since there are so many orders at these levels, it is difficult for asset price to move beyond in case of market movements.
 
