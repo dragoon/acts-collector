@@ -29,17 +29,29 @@ like a stock, currency, or cryptocurrency.
 The key components of an order book are bids and asks.
 A "bid" is an offer to buy a financial instrument at a specific price.
 It represents the highest price a buyer is willing to pay.
-For example, if someone wants to buy Bitcoin, they place a bid at the price they're willing to pay.
 On the other side, an "ask" is an offer to sell at a specific price.
 It represents the lowest price a seller is willing to accept.
 So, if someone wants to sell their Bitcoin, they place an ask at their desired price.
+
+![](assets/bid_ask.png)
+Image source: https://www.researchgate.net/figure/Example-of-an-order-book-This-figure-illustrates-a-toy-example-of-an-order-book-Source_fig3_362852898
 
 The difference between the highest bid and the lowest ask is known as the "spread."
 A smaller spread often indicates a more liquid market, meaning there are many buyers and sellers,
 and it's easier to execute a trade at a price close to the market value.
 The order book provides valuable insight into the supply and demand
 at different price levels and helps traders make informed decisions.
-For instance, a large number of bids at a particular price level might indicate strong support for that price, while a significant number of asks might suggest a resistance level.
+For instance, a large number of bids at a particular price level might indicate strong support for that price,
+while a significant number of asks might suggest a resistance level.
+
+Here is a bar plot visualization of an order book for bitcoin:
+
+[XXX]
+
+The height of each bar is the amount of orders at this particular price.
+You can see the peaks on both asks and bids sides of the book.
+This is what people refer to as a support/resistance price of an asset.
+Since there are so many orders at these levels, it is difficult for asset price to move beyond in case of market movements.
 
 ### Data types
 
@@ -60,7 +72,6 @@ Let’s define the data we would like to collect:
 We are going to build a data collection platform from a single exchange,
 in real system you probably would like to collect data from multiple exchanges
 and merge/aggregate them somehow depending on the trading strategy you are implementing.
-
 
 
 Next we define requirements for our data collection pipeline
@@ -275,7 +286,7 @@ Finally, ``_process_depth_cache`` function checks the elapsed time and sends dat
 ### Unit testing
 
 The new structure made it possible to test each part of the system independently, which is exactly the point of unit testing.
-The source code for tests lives under [/tests/datacollector](https://github.com/FarawayTech/faraway-finance/tree/master/tests/datacollector) directory, which you can explore on your own.
+The source code for tests lives under [/tests/datacollector](https://github.com/dragoon/acts-collector/tree/master/tests/datacollector) directory, which you can explore on your own.
 
 I have also set up a GitHub action workflow to run unit tests automatically and report coverage:
 ![](assets/coverage.png)
@@ -316,6 +327,9 @@ For example, here are the graphs of total number of asks and bids for Bitcoin us
 
 During the particular moment when BTC price went down, we can see lots of bids eliminated such that the lines quickly converge to the same values,
 while total asks difference remains significant even after many hours.
+
+In the next part, we will discuss how to load historical order data to conduct backtesting.
+[TODO: acts-historic-data](https://github.com/dragoon/acts-historic-data)
 
 
 
