@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -51,6 +52,17 @@ class DataProcessService:
         self.logger.info(f"BB4 at {current_time}: {bb4:.2f}")
         self.logger.info(f"Total asks: {len(asks)}")
         self.logger.info(f"Total bids: {len(bids)}")
+
+        if current_time.minute == 0 and current_time.hour in (12, 0):
+            # store full book as json every hour
+            asks_histogram = [(Decimal(price), qty) for price, qty in asks]
+            bids_histogram = [(Decimal(price), qty) for price, qty in bids]
+            asks_data = [{'price': str(price), 'quantity': qty} for price, qty in asks_histogram]
+            bids_data = [{'price': str(price), 'quantity': qty} for price, qty in bids_histogram]
+
+            file_name = f"order_book_{current_time.strftime('%Y%m%d_%H%M%S')}.json"
+            with open(file_name, 'w') as file:
+                json.dump({'asks': asks_data, 'bids': bids_data}, file, indent=4)
 
         data_entry = AssetDataEntry(
             mid_price=mid_price,
