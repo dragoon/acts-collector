@@ -54,7 +54,7 @@ class DataProcessService:
         self.logger.info(f"Total bids: {len(bids)}")
 
         if current_time.minute == 0 and current_time.hour in (12, 0):
-            # store full book as json every hour
+            # store full book as json 12 hours
             asks_histogram = [(Decimal(price), qty) for price, qty in asks]
             bids_histogram = [(Decimal(price), qty) for price, qty in bids]
             asks_data = [{'price': str(price), 'quantity': qty} for price, qty in asks_histogram]
