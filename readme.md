@@ -1,3 +1,5 @@
+![](assets/logo.png)
+
 # Automated Crypto Trading System (ACTS)
 
 In the last couple of years, I have built and maintained an automated trading system for a hedge fund that traded
