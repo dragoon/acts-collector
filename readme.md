@@ -54,8 +54,8 @@ Let’s define the data we would like to collect:
   highest buy) and best ask (lowest sell) prices
 - **Order book (derivatives)**. This data type largely depends on a specific trading
   strategy, but a lot of advanced strategies use values like
-  the **order book bias** at different levels, **amount of bid/asks**, etc. So this is what we are also going to
-  collect.
+  the **order book bias** at different levels, **amount of bid/asks**, etc.
+  This is what we are also going to collect here as well.
 - If you have a lot of resources, you might even want to replicate the complete
   order book and store all events, so that you can compute
   any order book feature you didn't think of initially.
