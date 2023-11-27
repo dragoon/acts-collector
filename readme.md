@@ -62,15 +62,10 @@ Let’s define the data we would like to collect:
 
 ### Requirements.
 
-We are going to build a data collection platform from a single exchange,
-in real system you probably would like to collect data from multiple exchanges
-and merge/aggregate them somehow depending on the trading strategy you are implementing.
-
-
 Next we define requirements for our data collection pipeline
 that will guide our implementation:
 
-- **Single exchange**: I am going to collect data from a single exchange, in actual system you probably would like to collect data from multiple exchanges
+- **Single exchange**: I am going to collect data from a single exchange, in a production system you probably would like to collect data from multiple exchanges
 and merge/aggregate it depending on the trading strategy.
 - **Multi-assets**: The system should easily handle multiple assets and allow to add new assets easily.
 - **Resilience**: Crypto exchanges work non-stop, so we want our system to
