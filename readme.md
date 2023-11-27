@@ -13,7 +13,7 @@ Here is a high-level overview of what we are going to cover:
 4. Unit and integration testing
 5. Live trading
 
-## Data collection system
+## Real-time data collection system
 
 The first system we are going to build is a real-time data collection system.
 This system will collect data from the order book in near real-time,
@@ -38,12 +38,12 @@ and it's easier to execute a trade at a price close to the market value.
 
 Here is a bar plot visualization of an order book for bitcoin that illustrates those concepts:
 
-[XXX]
+![](assets/order_book_btc.png)
 
 The height of each bar is the amount of orders at this particular price.
-The lowest ask is XXX USDT, the highest bid is XXX USDT, Current mid-price is XXX USDT, and current spread is XXX USDT.
-You can notice the peaks on both asks and bids sides of the book.
-This is what people refer to as a support/resistance price of an asset.
+Bitcoin in very liquid, so both the lowest ask and the highest bid are very close.
+You can also notice the many peaks on both asks and bids sides of the book.
+This is what people refer to as a support/resistance price levels of an asset.
 Since there are so many orders at these levels, it is difficult for asset price to move beyond in case of market movements.
 
 ### Data types
