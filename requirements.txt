@@ -1,3 +1,3 @@
-python-binance
-pymongo
+git+https://github.com/dragoon/python-binance.git#egg=binance
+pymongo==4.6.1
 environs
