@@ -302,7 +302,7 @@ This is clearly visible when we plot the total number of bids/asks for any asset
 
 For very liquid assets like BTC, order book can contain many more bids and asks then initial 5000 allowed by _Binance_.
 So actually we don't want to refresh our order book cache at all unless there is an exception.
-After fixing the issue with refresh interval, the chart looks correct like this:
+After fixing the issue with refresh interval, the chart looks much better:
 
 ![](assets/refresh_interval_fixed.png)
 
@@ -317,8 +317,19 @@ For example, here are the graphs of total number of asks and bids for Bitcoin us
 
 ![](assets/different_limits.png)
 
-During the particular moment when BTC price went down, we can see lots of bids eliminated such that the lines quickly converge to the same values,
+During that particular moment when BTC price went down, we can see lots of bids eliminated such that the lines quickly converge to the same values,
 while total asks difference remains significant even after many hours.
+
+### Other issues in python-binance
+Unfortunately, there are some other issues/design decision in ``python-binance`` that make non-interrupted order book data collection problematic:
+* If the socket connection is lost and needs to be re-created for some reason, order book is reset through a REST call with 5000 entries.
+This is a design decision, as the library checks if the next event has exactly +1 sequence number from the previous one.
+However, losing events is not critical as they represent the total amount of orders on a particular price level, and this level will be updated eventually.
+Much more important is that we don't lose the collected order book because of this.
+* Occasionally, the socket connection gets "stuck", and in the logs you can see something like "no message in 10 seconds", and it can go forever. This doesn't happen very often, but is a major problem nonetheless.
+
+I have fixed the first issue in my fork of ``python-binance`` by removing the depth cache reset even if we missed some events due to socket reconnect:
+https://github.com/dragoon/python-binance
 
 In the next part, we will discuss how to load historical order data to conduct backtesting.
 [TODO: acts-historic-data](https://github.com/dragoon/acts-historic-data)
